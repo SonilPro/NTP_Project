@@ -1,0 +1,15 @@
+<div>
+    <div *ngFor="let e of posts; let i = index">
+        <div style="border: 1px solid black; padding: 10px">
+            <p>By {{ getUser(e.userId) }} at {{ e.timestamp }}</p>
+            {{ e.comment }}
+        </div>
+    </div>
+    <div>
+        <strong>User data:</strong>
+        <p>Username: {{loggedInUser.username}}</p>
+        <p>E-mail: {{loggedInUser.email}}</p>
+        <p>Name: {{loggedInUser.name}}</p>
+    </div>
+</div>
+<a [routerLink]="['/']">back</a>

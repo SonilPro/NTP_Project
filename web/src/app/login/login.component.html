@@ -1,0 +1,11 @@
+<form (submit)="onLogin()" [formGroup]="signinForm">
+  <fieldset>
+    <input type="text" formControlName="username" placeholder="Enter username">
+  </fieldset>
+  <fieldset>
+    <input type="password" formControlName="password" placeholder="Enter password">
+  </fieldset>
+  <button type="submit" [disabled]="signinForm.invalid">Login</button>
+  <button [routerLink]="['/register']">Register</button>
+  <div *ngIf="errorMessage">{{errorMessage}}</div>
+</form>

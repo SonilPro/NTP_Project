@@ -1,0 +1,46 @@
+<div>
+  <a *ngIf="authenticated"
+    >Welcome
+    <a [routerLink]="['profile']"
+      >{{ loggedInUser.username }} ({{ loggedInUser.email }})</a
+    ></a
+  >
+  <button *ngIf="authenticated" (click)="logout()">Logout</button>
+  <p>Posts ({{ posts.length }})</p>
+  <div *ngFor="let e of posts; let i = index">
+    <div style="border: 1px solid black; padding: 10px">
+      By {{ getUser(e.userId) }} at {{ e.timestamp }}
+      <div *ngIf="editNumber != i; else ta">
+        {{ e.comment }}
+        <button *ngIf="e.userId == loggedInUser._id" (click)="delete(i)">
+          Delete
+        </button>
+        <button *ngIf="e.userId == loggedInUser._id" (click)="edit(i)">
+          Edit
+        </button>
+      </div>
+      <ng-template #ta>
+        <br />
+        <textarea [(ngModel)]="textAreaText"></textarea>
+        <br />
+        <button (click)="saveEdit(i)">Save</button>
+      </ng-template>
+    </div>
+  </div>
+</div>
+<button (click)="toggleNewPost()">New</button>
+<div *ngIf="addPost == true">
+  User<br />
+  <input type="text" value="{{ loggedInUser.username }}" disabled /><br />
+  Comment<br />
+  <textarea [(ngModel)]="newPost.comment"></textarea><br />
+  <button
+    (click)="add()"
+    [disabled]="newPost.comment.length < 1"
+    [ngStyle]="{
+      'background-color': newPost.comment.length > 0 ? '#73c7af' : 'red'
+    }"
+  >
+    Send
+  </button>
+</div>

@@ -1,0 +1,1 @@
+{"ast":null,"code":"export class Post {\n  constructor() {\n    this.userId = -1;\n    this.timestamp = '';\n    this.comment = '';\n    this._id = -1;\n  }\n}","map":null,"metadata":{},"sourceType":"module","externalDependencies":[]}
