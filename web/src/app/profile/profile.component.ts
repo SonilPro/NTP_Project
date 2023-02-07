@@ -27,7 +27,7 @@ export class ProfileComponent {
     this.postsSubject.subscribe((res) => {
       this.posts = res;
       this.posts = this.posts.filter(
-        (post) => post.userId === this.loggedInUser._id
+        (post) => post.user_id === this.loggedInUser.id
       );
     });
   }

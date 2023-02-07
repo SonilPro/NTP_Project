@@ -1,8 +1,8 @@
 <div>
     <div *ngFor="let e of posts; let i = index">
         <div style="border: 1px solid black; padding: 10px">
-            <p>By {{ getUser(e.userId) }} at {{ e.timestamp }}</p>
-            {{ e.comment }}
+            <p>By {{ getUser(e.user_id) }} at {{ e.datetime_published }}</p>
+            {{ e.content }}
         </div>
     </div>
     <div>

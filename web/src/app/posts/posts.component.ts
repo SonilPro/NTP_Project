@@ -51,30 +51,30 @@ export class PostsComponent {
   }
 
   add() {
-    if (this.loggedInUser._id !== undefined) {
-      this.newPost.userId = this.loggedInUser._id;
+    if (this.loggedInUser.id !== undefined) {
+      this.newPost.user_id = this.loggedInUser.id;
     }
 
-    if (this.newPost.userId !== undefined) {
+    if (this.newPost.user_id !== undefined) {
       this.postsService.addPost(this.newPost);
       this.addPost = false;
     }
   }
 
   edit(i: number) {
-    this.textAreaText = this.posts[i].comment;
+    this.textAreaText = this.posts[i].content;
     this.editNumber = i;
   }
 
   saveEdit(i: number) {
     let tmpPost: Post = { ...this.posts[i] };
-    tmpPost.comment = this.textAreaText;
+    tmpPost.content = this.textAreaText;
     this.postsService.editPost(tmpPost);
     this.editNumber = -1;
   }
 
   delete(i: number) {
-    this.postsService.deletePost(this.posts[i]._id);
+    this.postsService.deletePost(this.posts[i].id);
     this.posts.splice(i, 1);
     this.editNumber = -1;
   }

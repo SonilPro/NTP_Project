@@ -22,7 +22,7 @@ export class PostsService {
   }
 
   public addPost(post: Post) {
-    post.timestamp = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    post.datetime_published = new Date().toISOString().slice(0, 19).replace('T', ' ');
     this.apiProvider.addPost(post).subscribe((res: any) => {
       this.posts.push({ ...post });
       this.postsSubject.next([...this.posts]);
@@ -31,14 +31,14 @@ export class PostsService {
 
   public editPost(post: Post) {
     this.apiProvider.editPost(post).subscribe((res: any) => {
-      this.posts[this.posts.findIndex((p) => p._id == post._id)] = post;
+      this.posts[this.posts.findIndex((p) => p.id == post.id)] = post;
       this.postsSubject.next([...this.posts]);
     });
   }
 
   public deletePost(id: number) {
     this.apiProvider.deletePost(id).subscribe((res) => {
-      this.posts = this.posts.filter((post) => post._id != id);
+      this.posts = this.posts.filter((post) => post.id != id);
       this.postsSubject.next([...this.posts]);
     });
   }

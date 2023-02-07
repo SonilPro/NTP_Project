@@ -1,21 +1,17 @@
 <div>
-  <a *ngIf="authenticated"
-    >Welcome
-    <a [routerLink]="['profile']"
-      >{{ loggedInUser.username }} ({{ loggedInUser.email }})</a
-    ></a
-  >
+  <a *ngIf="authenticated">Welcome
+    <a [routerLink]="['profile']">{{ loggedInUser.username }} ({{ loggedInUser.email }})</a></a>
   <button *ngIf="authenticated" (click)="logout()">Logout</button>
   <p>Posts ({{ posts.length }})</p>
   <div *ngFor="let e of posts; let i = index">
     <div style="border: 1px solid black; padding: 10px">
-      By {{ getUser(e.userId) }} at {{ e.timestamp }}
+      By {{ getUser(e.user_id) }} at {{ e.datetime_published }}
       <div *ngIf="editNumber != i; else ta">
-        {{ e.comment }}
-        <button *ngIf="e.userId == loggedInUser._id" (click)="delete(i)">
+        {{ e.content }}
+        <button *ngIf="e.user_id == loggedInUser.id" (click)="delete(i)">
           Delete
         </button>
-        <button *ngIf="e.userId == loggedInUser._id" (click)="edit(i)">
+        <button *ngIf="e.user_id == loggedInUser.id" (click)="edit(i)">
           Edit
         </button>
       </div>
@@ -33,14 +29,10 @@
   User<br />
   <input type="text" value="{{ loggedInUser.username }}" disabled /><br />
   Comment<br />
-  <textarea [(ngModel)]="newPost.comment"></textarea><br />
-  <button
-    (click)="add()"
-    [disabled]="newPost.comment.length < 1"
-    [ngStyle]="{
-      'background-color': newPost.comment.length > 0 ? '#73c7af' : 'red'
-    }"
-  >
+  <textarea [(ngModel)]="newPost.content"></textarea><br />
+  <button (click)="add()" [disabled]="newPost.content.length < 1" [ngStyle]="{
+      'background-color': newPost.content.length > 0 ? '#73c7af' : 'red'
+    }">
     Send
   </button>
 </div>
