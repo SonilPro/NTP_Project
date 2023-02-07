@@ -1,11 +1,18 @@
-<form (submit)="onLogin()" [formGroup]="signinForm">
-  <fieldset>
-    <input type="text" formControlName="username" placeholder="Enter username">
-  </fieldset>
-  <fieldset>
-    <input type="password" formControlName="password" placeholder="Enter password">
-  </fieldset>
-  <button type="submit" [disabled]="signinForm.invalid">Login</button>
-  <button [routerLink]="['/register']">Register</button>
-  <div *ngIf="errorMessage">{{errorMessage}}</div>
-</form>
+<div class="text-center m-auto vh-100 d-flex justify-content-center align-items-center">
+  <main class="form-signin w-25 m-auto">
+    <form (submit)="onLogin()" [formGroup]="signinForm">
+      <h1 class="h3 mb-3 fw-normal">Please Log in</h1>
+      <div class="form-floating">
+        <input type="text" class="form-control" id="username" formControlName="username" placeholder="Username">
+        <label for="username">Username</label>
+      </div>
+      <div class="form-floating mt-2">
+        <input type="password" class="form-control" id="password" formControlName="password" placeholder="Password">
+        <label for="password">Password</label>
+      </div>
+      <button class="w-100 mt-2 btn btn-lg btn-primary" type="submit" [disabled]="signinForm.invalid">Login</button>
+      <button class="w-100 mt-2 btn btn-lg btn-primary" [routerLink]="['/register']">Register</button>
+      <div *ngIf="errorMessage">{{errorMessage}}</div>
+    </form>
+  </main>
+</div>
