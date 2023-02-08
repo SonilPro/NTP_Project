@@ -17,7 +17,6 @@ export class PostsComponent {
   textAreaText = '';
   addPost = false;
 
-  authenticated = false;
   authChangeSubscription: Subscription | null = null;
 
   newPost: Post = new Post();
@@ -39,12 +38,10 @@ export class PostsComponent {
       this.posts = res;
     });
 
-    this.authenticated = this.authService.isAuthenticated();
     this.loggedInUser = this.authService.getUser();
 
     this.authChangeSubscription = this.authService.authChange.subscribe(
       (res) => {
-        this.authenticated = this.authService.isAuthenticated();
         this.loggedInUser = this.authService.getUser();
       }
     );
@@ -85,9 +82,5 @@ export class PostsComponent {
 
   getUser(userId: number) {
     return this.authService.getUserNameFromId(userId);
-  }
-
-  logout() {
-    this.authService.logout();
   }
 }

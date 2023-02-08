@@ -64,7 +64,7 @@ export class AuthService {
 
   getUserNameFromId(userId: number) {
     return (
-      this.users.find((user) => user.id === userId)?.username ?? 'Unknown user'
+      this.users.find((user) => user.id === userId)?.name ?? 'Unknown user'
     );
   }
 }

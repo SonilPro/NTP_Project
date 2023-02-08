@@ -1,1 +1,26 @@
-<p>homepage works!</p>
+<div class="container pb-5">
+  <div class="text-center">
+    <a *ngIf="authenticated">Welcome
+      <a [routerLink]="['profile']">{{ loggedInUser.username }} ({{ loggedInUser.email }})</a>
+    </a>
+    <br/>
+    <button type="button" class="btn btn-sm btn-outline-primary" *ngIf="authenticated" (click)="logout()">Logout</button>
+  </div>
+  <div class="row">
+    <div class="col">
+    </div>
+    <div class="col-6">
+      <app-posts/>
+    </div>
+    <div class="col">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+    </div>
+    <div class="col-5">
+    </div>
+    <div class="col">
+    </div>
+  </div>
+</div>
