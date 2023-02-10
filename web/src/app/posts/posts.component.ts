@@ -1,10 +1,11 @@
-import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
-import { AuthService } from '../auth/auth.service';
-import { User } from '../auth/user.model';
-import { Post } from './post.model';
-import { PostsService } from './posts.service';
+import {Component} from '@angular/core';
+import {Subject, Subscription} from 'rxjs';
+import {AuthService} from '../auth/auth.service';
+import {User} from '../auth/user.model';
+import {Post} from './post.model';
+import {PostsService} from './posts.service';
+import {Like} from "./like.model";
+import {ApiProviderService} from "../api-provider.service";
 
 @Component({
   selector: 'app-posts',
@@ -24,18 +25,27 @@ export class PostsComponent {
   posts: Post[] = [];
   postsSubject: Subject<Post[]> = new Subject<Post[]>();
 
+  likes: Like[] = [];
+  isLiked: boolean = false;
+
   loggedInUser: User = new User();
 
   constructor(
     private postsService: PostsService,
     private authService: AuthService,
-    private httpClient: HttpClient
-  ) {}
+    private apiProvider: ApiProviderService
+  ) {
+  }
 
   ngOnInit(): void {
     this.postsSubject = this.postsService.getPosts();
     this.postsSubject.subscribe((res) => {
       this.posts = res;
+
+      this.apiProvider.getLikes().subscribe(res => {
+        this.likes = res;
+        this.isLiked = this.isLikedFunc();
+      })
     });
 
     this.loggedInUser = this.authService.getUser();
@@ -64,7 +74,7 @@ export class PostsComponent {
   }
 
   saveEdit(i: number) {
-    let tmpPost: Post = { ...this.posts[i] };
+    let tmpPost: Post = {...this.posts[i]};
     tmpPost.content = this.textAreaText;
     this.postsService.editPost(tmpPost);
     this.editNumber = -1;
@@ -82,5 +92,28 @@ export class PostsComponent {
 
   getUser(userId: number) {
     return this.authService.getUserNameFromId(userId);
+  }
+
+  like(postId: number) {
+    const like: Like = {
+      post_id: postId,
+      user_id: this.loggedInUser.id
+    }
+
+    if (this.isLiked) {
+      this.apiProvider.removeLike(like).subscribe(res => {
+        this.likes.splice(this.likes.indexOf(like));
+        this.isLiked = this.isLikedFunc();
+      });
+    } else {
+      this.apiProvider.addLike(like).subscribe(res => {
+        this.likes.push(like);
+        this.isLiked = this.isLikedFunc();
+      });
+    }
+  }
+
+  isLikedFunc() {
+    return this.likes.filter(like => like.user_id === this.loggedInUser.id).length > 0;
   }
 }
