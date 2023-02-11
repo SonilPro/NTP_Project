@@ -60,7 +60,7 @@ export class ApiProviderService {
     return this.httpClient.post(BASE_URL + '/likes', like);
   }
 
-  removeLike(like: Like) {
+  deleteLike(like: Like) {
     return this.httpClient.delete(BASE_URL + '/likes', {body: like});
   }
 }

@@ -37,8 +37,8 @@
             class="fa fa-smile-o ml-2"></i></div>
           <div class="d-flex gap-2 flex-row muted-color">
             <button (click)="like(e.id)" class="btn" style="padding: 0; font-size: 13px">
-              <i [ngClass]="isLiked ? 'bi bi-star-fill' : 'bi bi-star'"></i>
-              <span>{{(likes.length > 0) ? likes.length : ''}}</span>
+              <i [ngClass]="isLiked(e.id) ? 'bi bi-star-fill' : 'bi bi-star'"></i>
+              <span>{{(countLikes(e.id) > 0) ? countLikes(e.id) : ''}}</span>
             </button>
             <span>2 comments</span>
             <span class="ml-2">Share</span>

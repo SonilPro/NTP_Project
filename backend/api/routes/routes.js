@@ -163,8 +163,49 @@ module.exports = function (express, pool) {
                 res.json({status: "NOT OK"});
             }
         });
-    ;
 
+    apiRouter
+        .route("/messages")
+        .get(async (req, res) => {
+            try {
+                let conn = await pool.getConnection();
+                let [rows] = await conn.query("SELECT * FROM messages");
+                conn.release();
+                res.json({status: "OK", likes: rows});
+            } catch (e) {
+                console.log(e);
+                return res.json({code: 100, status: "Error with query"});
+            }
+        })
+        .post(async (req, res) => {
+            const like = {
+                user_id: req.body.user_id,
+                post_id: req.body.post_id,
+            };
+            try {
+                let conn = await pool.getConnection();
+                let q = await conn.query("INSERT INTO messages SET ?", like);
+                conn.release();
+                res.json({status: "OK", insertId: q.insertId});
+            } catch (e) {
+                console.log(e);
+                return res.json({code: 100, status: "Error with query"});
+            }
+        })
+
+    apiRouter
+        .route("/messages/:id")
+        .delete(async function (req, res) {
+            try {
+                let conn = await pool.getConnection();
+                let q = await conn.query("DELETE FROM messages WHERE id = ?", req.params.id);
+                conn.release();
+                res.json({status: "OK", affectedRows: q.affectedRows});
+            } catch (e) {
+                console.log(e);
+                res.json({status: "NOT OK"});
+            }
+        });
 
     return apiRouter;
 };

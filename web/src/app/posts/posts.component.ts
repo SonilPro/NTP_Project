@@ -5,7 +5,6 @@ import {User} from '../auth/user.model';
 import {Post} from './post.model';
 import {PostsService} from './posts.service';
 import {Like} from "./like.model";
-import {ApiProviderService} from "../api-provider.service";
 
 @Component({
   selector: 'app-posts',
@@ -26,14 +25,13 @@ export class PostsComponent {
   postsSubject: Subject<Post[]> = new Subject<Post[]>();
 
   likes: Like[] = [];
-  isLiked: boolean = false;
+  likesSubject: Subject<Like[]> = new Subject<Like[]>();
 
   loggedInUser: User = new User();
 
   constructor(
     private postsService: PostsService,
-    private authService: AuthService,
-    private apiProvider: ApiProviderService
+    private authService: AuthService
   ) {
   }
 
@@ -41,12 +39,12 @@ export class PostsComponent {
     this.postsSubject = this.postsService.getPosts();
     this.postsSubject.subscribe((res) => {
       this.posts = res;
-
-      this.apiProvider.getLikes().subscribe(res => {
-        this.likes = res;
-        this.isLiked = this.isLikedFunc();
-      })
     });
+
+    this.likesSubject = this.postsService.getLikes();
+    this.likesSubject.subscribe(res => {
+      this.likes = res;
+    })
 
     this.loggedInUser = this.authService.getUser();
 
@@ -95,25 +93,22 @@ export class PostsComponent {
   }
 
   like(postId: number) {
-    const like: Like = {
-      post_id: postId,
-      user_id: this.loggedInUser.id
-    }
-
-    if (this.isLiked) {
-      this.apiProvider.removeLike(like).subscribe(res => {
-        this.likes.splice(this.likes.indexOf(like));
-        this.isLiked = this.isLikedFunc();
-      });
+    if (this.isLiked(postId)) {
+      this.postsService.deleteLike(this.likes.find(like => like.user_id === this.loggedInUser.id && like.post_id === postId)!);
     } else {
-      this.apiProvider.addLike(like).subscribe(res => {
-        this.likes.push(like);
-        this.isLiked = this.isLikedFunc();
-      });
+      const like: Like = {
+        post_id: postId,
+        user_id: this.loggedInUser.id
+      }
+      this.postsService.addLike(like);
     }
   }
 
-  isLikedFunc() {
-    return this.likes.filter(like => like.user_id === this.loggedInUser.id).length > 0;
+  isLiked(postId: number) {
+    return this.likes.filter(like => like.user_id === this.loggedInUser.id && like.post_id === postId).length > 0;
+  }
+
+  countLikes(postId: number) {
+    return this.likes.filter(like => like.post_id === postId).length
   }
 }
