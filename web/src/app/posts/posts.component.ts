@@ -5,6 +5,7 @@ import {User} from '../auth/user.model';
 import {Post} from './post.model';
 import {PostsService} from './posts.service';
 import {Like} from "./like.model";
+import {Comment} from "./comment.model";
 
 @Component({
   selector: 'app-posts',
@@ -27,6 +28,10 @@ export class PostsComponent {
   likes: Like[] = [];
   likesSubject: Subject<Like[]> = new Subject<Like[]>();
 
+  newCommentText: string[] = [];
+  comments: Comment[] = [];
+  commentsSubject: Subject<Comment[]> = new Subject<Comment[]>();
+
   loggedInUser: User = new User();
 
   constructor(
@@ -44,6 +49,11 @@ export class PostsComponent {
     this.likesSubject = this.postsService.getLikes();
     this.likesSubject.subscribe(res => {
       this.likes = res;
+    })
+
+    this.commentsSubject = this.postsService.getComments();
+    this.commentsSubject.subscribe(res => {
+      this.comments = res;
     })
 
     this.loggedInUser = this.authService.getUser();
@@ -110,5 +120,23 @@ export class PostsComponent {
 
   countLikes(postId: number) {
     return this.likes.filter(like => like.post_id === postId).length
+  }
+
+  getPostComments(postId: number) {
+    return this.comments.filter(comment => comment.post_id === postId);
+  }
+
+  addPostComment(postId: number) {
+    const newComment: Comment = {
+      post_id: postId,
+      user_id: this.loggedInUser.id,
+      comment: this.newCommentText[postId]
+    }
+    this.postsService.addComment(newComment);
+    this.newCommentText = [];
+  }
+
+  getUsernameForComment(userId: number) {
+    return this.authService.getUserNameFromId(userId);
   }
 }

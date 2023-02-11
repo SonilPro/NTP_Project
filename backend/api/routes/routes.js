@@ -28,7 +28,7 @@ module.exports = function (express, pool) {
                 let conn = await pool.getConnection();
                 let q = await conn.query("INSERT INTO posts SET ?", post);
                 conn.release();
-                res.json({status: "OK", insertId: q.insertId});
+                res.json({status: "OK", insertId: q[0].insertId});
             } catch (e) {
                 console.log(e);
                 return res.json({code: 100, status: "Error with query"});
@@ -54,9 +54,11 @@ module.exports = function (express, pool) {
         .delete(async function (req, res) {
             try {
                 let conn = await pool.getConnection();
-                let q = await conn.query("DELETE FROM posts WHERE id = ?", req.params.id);
+                let q1 = await conn.query("DELETE FROM likes WHERE post_id = ?", req.params.id);
+                let q2 = await conn.query("DELETE FROM comments WHERE post_id = ?", req.params.id);
+                let q3 = await conn.query("DELETE FROM posts WHERE id = ?", req.params.id);
                 conn.release();
-                res.json({status: "OK", affectedRows: q.affectedRows});
+                res.json({status: "OK", affectedRows: q3[0].affectedRows});
             } catch (e) {
                 console.log(e);
                 res.json({status: "NOT OK"});
@@ -165,11 +167,11 @@ module.exports = function (express, pool) {
         });
 
     apiRouter
-        .route("/messages")
+        .route("/comments")
         .get(async (req, res) => {
             try {
                 let conn = await pool.getConnection();
-                let [rows] = await conn.query("SELECT * FROM messages");
+                let [rows] = await conn.query("SELECT * FROM comments");
                 conn.release();
                 res.json({status: "OK", likes: rows});
             } catch (e) {
@@ -178,13 +180,14 @@ module.exports = function (express, pool) {
             }
         })
         .post(async (req, res) => {
-            const like = {
+            const comment = {
                 user_id: req.body.user_id,
                 post_id: req.body.post_id,
+                comment: req.body.comment
             };
             try {
                 let conn = await pool.getConnection();
-                let q = await conn.query("INSERT INTO messages SET ?", like);
+                let q = await conn.query("INSERT INTO comments SET ?", comment);
                 conn.release();
                 res.json({status: "OK", insertId: q.insertId});
             } catch (e) {

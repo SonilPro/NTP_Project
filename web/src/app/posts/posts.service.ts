@@ -3,6 +3,7 @@ import {ApiProviderService} from '../api-provider.service';
 import {Post} from './post.model';
 import {Subject} from 'rxjs';
 import {Like} from "./like.model";
+import {Comment} from "./comment.model";
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +14,9 @@ export class PostsService {
 
   likes: Like[] = [];
   likesSubject: Subject<Like[]> = new Subject<Like[]>();
+
+  comments: Comment[] = [];
+  commentsSubject: Subject<Comment[]> = new Subject<Comment[]>();
 
   constructor(private apiProvider: ApiProviderService) {
   }
@@ -28,6 +32,7 @@ export class PostsService {
   public addPost(post: Post) {
     post.datetime_published = new Date().toISOString().slice(0, 19).replace('T', ' ');
     this.apiProvider.addPost(post).subscribe((res: any) => {
+      post.id = res.insertId;
       this.posts.push({...post});
       this.postsSubject.next([...this.posts]);
     });
@@ -67,5 +72,20 @@ export class PostsService {
       this.likes.splice(this.likes.indexOf(like), 1);
       this.likesSubject.next([...this.likes]);
     })
+  }
+
+  public getComments() {
+    this.apiProvider.getComments().subscribe((res) => {
+      this.comments = res as Comment[];
+      this.commentsSubject.next([...this.comments]);
+    });
+    return this.commentsSubject;
+  }
+
+  public addComment(comment: Comment) {
+    this.apiProvider.addComment(comment).subscribe((res: any) => {
+      this.comments.push({...comment});
+      this.commentsSubject.next([...this.comments]);
+    });
   }
 }

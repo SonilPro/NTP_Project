@@ -5,6 +5,7 @@ import {Post} from './posts/post.model';
 import {User} from './auth/user.model';
 import {environment} from '../environments/environment';
 import {Like} from "./posts/like.model";
+import {Comment} from "./posts/comment.model";
 
 const BASE_URL = environment.api_base_url;
 
@@ -62,5 +63,17 @@ export class ApiProviderService {
 
   deleteLike(like: Like) {
     return this.httpClient.delete(BASE_URL + '/likes', {body: like});
+  }
+
+  getComments() {
+    return this.httpClient.get(BASE_URL + '/comments').pipe(
+      map((res: any) => {
+        return res.likes;
+      })
+    );
+  }
+
+  addComment(comment: Comment) {
+    return this.httpClient.post(BASE_URL + '/comments', comment);
   }
 }
