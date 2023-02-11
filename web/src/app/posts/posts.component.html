@@ -56,6 +56,7 @@
                 </div>
               </div>
             </div>
+            <button (click)="deletePostComment(comment.id)" *ngIf="comment.user_id == loggedInUser.id">Delete</button>
           </div>
         </div>
         <div class="comment-input">

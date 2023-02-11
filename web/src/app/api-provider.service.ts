@@ -76,4 +76,8 @@ export class ApiProviderService {
   addComment(comment: Comment) {
     return this.httpClient.post(BASE_URL + '/comments', comment);
   }
+
+  deleteComment(commentId: number) {
+    return this.httpClient.delete(BASE_URL + '/comments/' + commentId);
+  }
 }

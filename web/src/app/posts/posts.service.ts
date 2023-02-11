@@ -84,8 +84,16 @@ export class PostsService {
 
   public addComment(comment: Comment) {
     this.apiProvider.addComment(comment).subscribe((res: any) => {
+      comment.id = res.insertId;
       this.comments.push({...comment});
       this.commentsSubject.next([...this.comments]);
     });
+  }
+
+  public deleteComment(commentId: number) {
+    this.apiProvider.deleteComment(commentId).subscribe(res => {
+      this.comments = this.comments.filter(comment => comment.id !== commentId);
+      this.commentsSubject.next([...this.comments]);
+    })
   }
 }

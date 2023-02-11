@@ -128,12 +128,17 @@ export class PostsComponent {
 
   addPostComment(postId: number) {
     const newComment: Comment = {
+      id: -1,
       post_id: postId,
       user_id: this.loggedInUser.id,
       comment: this.newCommentText[postId]
     }
     this.postsService.addComment(newComment);
     this.newCommentText = [];
+  }
+
+  deletePostComment(commentId: number) {
+    this.postsService.deleteComment(commentId);
   }
 
   getUsernameForComment(userId: number) {

@@ -127,6 +127,20 @@ module.exports = function (express, pool) {
         });
 
     apiRouter
+        .route("/messages/:id")
+        .delete(async function (req, res) {
+            try {
+                let conn = await pool.getConnection();
+                let q = await conn.query("DELETE FROM messages WHERE id = ?", req.params.id);
+                conn.release();
+                res.json({status: "OK", affectedRows: q.affectedRows});
+            } catch (e) {
+                console.log(e);
+                res.json({status: "NOT OK"});
+            }
+        });
+
+    apiRouter
         .route("/likes")
         .get(async (req, res) => {
             try {
@@ -189,7 +203,7 @@ module.exports = function (express, pool) {
                 let conn = await pool.getConnection();
                 let q = await conn.query("INSERT INTO comments SET ?", comment);
                 conn.release();
-                res.json({status: "OK", insertId: q.insertId});
+                res.json({status: "OK", insertId: q[0].insertId});
             } catch (e) {
                 console.log(e);
                 return res.json({code: 100, status: "Error with query"});
@@ -197,11 +211,11 @@ module.exports = function (express, pool) {
         })
 
     apiRouter
-        .route("/messages/:id")
+        .route("/comments/:id")
         .delete(async function (req, res) {
             try {
                 let conn = await pool.getConnection();
-                let q = await conn.query("DELETE FROM messages WHERE id = ?", req.params.id);
+                let q = await conn.query("DELETE FROM comments WHERE id = ?", req.params.id);
                 conn.release();
                 res.json({status: "OK", affectedRows: q.affectedRows});
             } catch (e) {
