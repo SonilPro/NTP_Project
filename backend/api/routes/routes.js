@@ -1,3 +1,5 @@
+const jwt_decode = require("jwt-decode");
+
 module.exports = function (express, pool, jwt, secret) {
     const apiRouter = express.Router();
 
@@ -12,6 +14,7 @@ module.exports = function (express, pool, jwt, secret) {
                         message: 'Wrong token'
                     });
                 } else {
+                    req.user = jwt_decode(token);
                     req.decoded = decoded;
                     next();
                 }
@@ -63,20 +66,31 @@ module.exports = function (express, pool, jwt, secret) {
             const post = {
                 content: req.body.content
             }
-
             try {
                 let conn = await pool.getConnection();
+
+                let testQ = await conn.query("SELECT distinct user_id FROM posts WHERE id = ?", req.params.id);
+                if (testQ[0][0].user_id !== req.user.id && !isAdmin(req)) {
+                    throw new Error("no permission");
+                }
+
                 let q = await conn.query("UPDATE posts SET ? WHERE id=?", [post, req.params.id]);
                 conn.release();
-                res.json({status: "OK", insertId: q.insertId});
+                res.json({status: "OK", insertId: q[0].insertId});
             } catch (e) {
                 console.log(e);
-                return res.json({code: 100, status: "Error with query"});
+                return res.json({code: 100, status: e.message});
             }
         })
         .delete(async function (req, res) {
             try {
                 let conn = await pool.getConnection();
+                let testQ = await conn.query("SELECT distinct user_id FROM posts WHERE id = ?", req.params.id);
+
+                if (testQ[0][0].user_id !== req.user.id && !isAdmin(req)) {
+                    throw new Error("no permission");
+                }
+
                 let q1 = await conn.query("DELETE FROM likes WHERE post_id = ?", req.params.id);
                 let q2 = await conn.query("DELETE FROM comments WHERE post_id = ?", req.params.id);
                 let q3 = await conn.query("DELETE FROM posts WHERE id = ?", req.params.id);
@@ -118,7 +132,7 @@ module.exports = function (express, pool, jwt, secret) {
         .post(async (req, res) => {
             const message = {
                 sender_id: req.body.sender_id,
-                reciever_id: req.body.reciever_id,
+                receiver_id: req.body.receiver_id,
                 message: req.body.message,
             };
             try {
@@ -137,12 +151,18 @@ module.exports = function (express, pool, jwt, secret) {
         .delete(async function (req, res) {
             try {
                 let conn = await pool.getConnection();
+
+                let testQ = await conn.query("SELECT distinct sender_id FROM messages WHERE id = ?", req.params.id);
+                if (testQ[0][0].sender_id !== req.user.id && !isAdmin(req)) {
+                    throw new Error("no permission");
+                }
+
                 let q = await conn.query("DELETE FROM messages WHERE id = ?", req.params.id);
                 conn.release();
                 res.json({status: "OK", affectedRows: q.affectedRows});
             } catch (e) {
                 console.log(e);
-                res.json({status: "NOT OK"});
+                res.json({status: "NOT OK", message: e.message});
             }
         });
 
@@ -177,12 +197,17 @@ module.exports = function (express, pool, jwt, secret) {
         .delete(async function (req, res) {
             try {
                 let conn = await pool.getConnection();
+
+                if (req.user_id !== req.user.id && !isAdmin(req)) {
+                    throw new Error("no permission");
+                }
+
                 let q = await conn.query("DELETE FROM likes WHERE user_id = ? AND post_id = ?", [req.body.user_id, req.body.post_id]);
                 conn.release();
                 res.json({status: "OK", affectedRows: q.affectedRows});
             } catch (e) {
                 console.log(e);
-                res.json({status: "NOT OK"});
+                res.json({status: "NOT OK", message: e.message});
             }
         });
 
@@ -221,14 +246,24 @@ module.exports = function (express, pool, jwt, secret) {
         .delete(async function (req, res) {
             try {
                 let conn = await pool.getConnection();
+
+                let testQ = await conn.query("SELECT distinct user_id FROM comments WHERE id = ?", req.params.id);
+                if (testQ[0][0].user_id !== req.user.id && !isAdmin(req)) {
+                    throw new Error("no permission");
+                }
+
                 let q = await conn.query("DELETE FROM comments WHERE id = ?", req.params.id);
                 conn.release();
                 res.json({status: "OK", affectedRows: q.affectedRows});
             } catch (e) {
                 console.log(e);
-                res.json({status: "NOT OK"});
+                res.json({status: "NOT OK", message: e.message});
             }
         });
 
     return apiRouter;
 };
+
+const isAdmin = (req) => {
+    return req.user.role === 'admin'
+}

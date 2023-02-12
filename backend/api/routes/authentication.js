@@ -14,7 +14,8 @@ module.exports = function (express, pool, jwt, secret, bcrypt) {
                     username: rows[0].username,
                     password: rows[0].password,
                     email: rows[0].email,
-                    level: rows[0].level
+                    role: rows[0].role,
+                    id: rows[0].id
                 }, secret, {
                     expiresIn: 1440
                 });
