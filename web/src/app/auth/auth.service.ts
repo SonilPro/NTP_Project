@@ -8,12 +8,14 @@ import {ApiProviderService} from '../api-provider.service';
 export class AuthService {
   private user: User | null = null;
   private users: User[] = [];
+  private usersSubject: Subject<User[]> = new Subject<User[]>();
   errorEmitter: Subject<string> = new Subject<string>();
   authChange: Subject<boolean> = new Subject<boolean>();
 
   constructor(private router: Router, private apiProvider: ApiProviderService) {
     apiProvider.getUsers().subscribe((res) => {
       this.users = res;
+      this.usersSubject.next([...this.users]);
     });
   }
 
@@ -56,6 +58,10 @@ export class AuthService {
     let u = localStorage.getItem('user');
     if (!this.user && u) this.user = JSON.parse(u);
     return {...this.user} as User;
+  }
+
+  getUsers() {
+    return this.usersSubject;
   }
 
   isAuthenticated() {

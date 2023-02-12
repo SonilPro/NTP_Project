@@ -12,6 +12,7 @@ import {ProfileComponent} from './profile/profile.component';
 import {HomepageComponent} from './homepage/homepage.component';
 import {CookieService} from "ngx-cookie-service";
 import {TokenInterceptor} from "./auth/interceptor.service";
+import { UsersComponent } from './users/users.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import {TokenInterceptor} from "./auth/interceptor.service";
     LoginComponent,
     RegisterComponent,
     ProfileComponent,
-    HomepageComponent
+    HomepageComponent,
+    UsersComponent
   ],
   imports: [
     BrowserModule,

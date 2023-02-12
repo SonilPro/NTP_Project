@@ -4,7 +4,8 @@
       <a [routerLink]="['profile']">{{ loggedInUser.username }} ({{ loggedInUser.email }})</a>
     </a>
     <br/>
-    <button type="button" class="btn btn-sm btn-outline-primary" *ngIf="authenticated" (click)="logout()">Logout</button>
+    <button type="button" class="btn btn-sm btn-outline-primary" *ngIf="authenticated" (click)="logout()">Logout
+    </button>
   </div>
   <div class="row">
     <div class="col">
@@ -13,6 +14,7 @@
       <app-posts/>
     </div>
     <div class="col">
+      <app-users/>
     </div>
   </div>
   <div class="row">
