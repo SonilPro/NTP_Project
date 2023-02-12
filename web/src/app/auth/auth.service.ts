@@ -1,11 +1,10 @@
-import { EventEmitter, Injectable } from '@angular/core';
-import { User } from './user.model';
-import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { Observable, Subject } from 'rxjs';
-import { ApiProviderService } from '../api-provider.service';
+import {Injectable} from '@angular/core';
+import {User} from './user.model';
+import {Router} from '@angular/router';
+import {Subject} from 'rxjs';
+import {ApiProviderService} from '../api-provider.service';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class AuthService {
   private user: User | null = null;
   private users: User[] = [];
@@ -25,20 +24,23 @@ export class AuthService {
   }
 
   login(credentials: { username: string; password: string }) {
-    this.apiProvider.getUsers().subscribe((res) => {
-      this.users = res;
-      let u = this.users.find(
-        (u) =>
-          u.username == credentials.username &&
-          u.password == credentials.password
-      );
-      if (u) {
-        this.user = u;
+    this.apiProvider.login(credentials.username, credentials.password).subscribe((res: any) => {
+      if (res.status === 'OK') {
+        this.user = res.user;
+
+        sessionStorage.setItem('x-access-token', res.token);
         localStorage.setItem('user', JSON.stringify(this.user));
         this.authChange.next(true);
+
+        this.apiProvider.getUsers().subscribe(res => {
+          console.log(res);
+          this.users = res;
+        })
+
         this.router.navigate(['/']);
       } else {
         this.errorEmitter.next('Wrong credentials');
+        this.authChange.next(false);
       }
     });
   }
@@ -53,7 +55,7 @@ export class AuthService {
   getUser() {
     let u = localStorage.getItem('user');
     if (!this.user && u) this.user = JSON.parse(u);
-    return { ...this.user } as User;
+    return {...this.user} as User;
   }
 
   isAuthenticated() {

@@ -1,5 +1,28 @@
-module.exports = function (express, pool) {
+module.exports = function (express, pool, jwt, secret) {
     const apiRouter = express.Router();
+
+    apiRouter.use(function (req, res, next) {
+        const token = req.body.token || req.params.token || req.headers['x-access-token'] || req.headers.authorization;
+
+        if (token) {
+            jwt.verify(token, secret, function (err, decoded) {
+                if (err) {
+                    return res.status(403).send({
+                        success: false,
+                        message: 'Wrong token'
+                    });
+                } else {
+                    req.decoded = decoded;
+                    next();
+                }
+            });
+        } else {
+            return res.status(403).send({
+                success: false,
+                message: 'No token'
+            });
+        }
+    });
 
     apiRouter.get("/", function (req, res) {
         res.json({message: "Hello"});
@@ -73,23 +96,6 @@ module.exports = function (express, pool) {
                 let [rows] = await conn.query("SELECT * FROM users");
                 conn.release();
                 res.json({status: "OK", users: rows});
-            } catch (e) {
-                console.log(e);
-                return res.json({code: 100, status: "Error with query"});
-            }
-        })
-        .post(async (req, res) => {
-            const user = {
-                username: req.body.username,
-                password: req.body.password,
-                name: req.body.name,
-                email: req.body.email,
-            };
-            try {
-                let conn = await pool.getConnection();
-                let q = await conn.query("INSERT INTO users SET ?", user);
-                conn.release();
-                res.json({status: "OK", insertId: q.insertId});
             } catch (e) {
                 console.log(e);
                 return res.json({code: 100, status: "Error with query"});
