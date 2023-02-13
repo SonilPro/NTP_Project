@@ -59,7 +59,6 @@ export class ApiProviderService {
   getLikes() {
     return this.httpClient.get(API_BASE_URL + '/likes').pipe(
       map((res: any) => {
-        console.log(res);
         return res.likes;
       })
     );

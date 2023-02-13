@@ -3,6 +3,7 @@ import {User} from './user.model';
 import {Router} from '@angular/router';
 import {Subject} from 'rxjs';
 import {ApiProviderService} from '../api-provider.service';
+import {Post} from "../posts/post.model";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -61,6 +62,10 @@ export class AuthService {
   }
 
   getUsers() {
+    this.apiProvider.getUsers().subscribe((res) => {
+      this.users = res as User[];
+      this.usersSubject.next([...this.users]);
+    });
     return this.usersSubject;
   }
 

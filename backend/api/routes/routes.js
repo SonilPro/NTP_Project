@@ -14,8 +14,7 @@ module.exports = function (express, pool, jwt, secret) {
                         message: 'Wrong token'
                     });
                 } else {
-                    req.user = jwt_decode(token);
-                    req.decoded = decoded;
+                    req.user = decoded;
                     next();
                 }
             });
@@ -198,7 +197,8 @@ module.exports = function (express, pool, jwt, secret) {
             try {
                 let conn = await pool.getConnection();
 
-                if (req.user_id !== req.user.id && !isAdmin(req)) {
+
+                if (req.body.user_id !== req.user.id && !isAdmin(req)) {
                     throw new Error("no permission");
                 }
 
