@@ -40,7 +40,7 @@ export class ApiProviderService {
   }
 
   editPost(post: Post) {
-    return this.httpClient.put(API_BASE_URL + '/posts', post);
+    return this.httpClient.put(API_BASE_URL + '/posts/' + post.id, post);
   }
 
   deletePost(id: number) {

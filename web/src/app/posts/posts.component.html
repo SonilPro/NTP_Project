@@ -78,7 +78,7 @@
     <div class="d-flex flex-column">
       User<br/>
       <input type="text" value="{{ loggedInUser.username }}" disabled/><br/>
-      Comment<br/>
+      Post<br/>
       <textarea [(ngModel)]="newPost.content"></textarea><br/>
       <button type="button" class="btn btn-sm btn-outline-primary" (click)="add()" [disabled]="newPost.content.length < 1"
               [ngStyle]="{
