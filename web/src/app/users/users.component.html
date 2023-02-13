@@ -1,4 +1,5 @@
+<h3>Users:</h3>
 <div *ngFor="let user of users">
-  <p>{{user.username}}</p>
+  <a [routerLink]="['profile', user.id]">{{user.username}}</a>
 </div>
-df
+

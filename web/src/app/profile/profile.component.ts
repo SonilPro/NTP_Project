@@ -4,6 +4,8 @@ import { AuthService } from '../auth/auth.service';
 import { User } from '../auth/user.model';
 import { Post } from '../posts/post.model';
 import { PostsService } from '../posts/posts.service';
+import {ActivatedRoute} from "@angular/router";
+import {Parser} from "@angular/compiler";
 
 @Component({
   selector: 'app-profile',
@@ -14,20 +16,22 @@ export class ProfileComponent {
   posts: Post[] = [];
   postsSubject: Subject<Post[]> = new Subject<Post[]>();
 
-  loggedInUser: User = new User();
+  user: User = new User();
 
   constructor(
     private postsService: PostsService,
-    private authService: AuthService
+    private authService: AuthService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.loggedInUser = this.authService.getUser();
+
     this.postsSubject = this.postsService.getPosts();
     this.postsSubject.subscribe((res) => {
+      this.user = this.authService.getUserById(parseInt(this.route.snapshot.paramMap.get('id')!)!)!;
       this.posts = res;
       this.posts = this.posts.filter(
-        (post) => post.user_id === this.loggedInUser.id
+        (post) => post.user_id === this.user.id
       );
     });
   }

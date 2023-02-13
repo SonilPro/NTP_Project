@@ -1,7 +1,7 @@
 <div class="container pb-5">
   <div class="text-center">
     <a *ngIf="authenticated">Welcome
-      <a [routerLink]="['profile']">{{ loggedInUser.username }} ({{ loggedInUser.email }})</a>
+      <a [routerLink]="['profile', loggedInUser.id]">{{ loggedInUser.username }} ({{ loggedInUser.email }})</a>
     </a>
     <br/>
     <button type="button" class="btn btn-sm btn-outline-primary" *ngIf="authenticated" (click)="logout()">Logout

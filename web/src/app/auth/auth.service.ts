@@ -61,6 +61,10 @@ export class AuthService {
     return {...this.user} as User;
   }
 
+  getUserById(id: number){
+    return this.users.find(user => user.id = id);
+  }
+
   getUsers() {
     this.apiProvider.getUsers().subscribe((res) => {
       this.users = res as User[];
