@@ -8,12 +8,12 @@
                class="rounded-circle">
           <div class="d-flex flex-column ml-2">
             <span class="font-weight-bold">
-              {{ getUser(post.user_id) }} at {{ post.datetime_published }}
+              {{ getUser(post.user_id) }}
             </span>
           </div>
         </div>
         <div class="d-flex flex-row mt-1 ellipsis">
-          <small class="mr-2">20 mins</small>
+          <small class="mr-2">{{ post.datetime_published | timeSince}}</small>
           <i class="fa fa-ellipsis-h"></i>
         </div>
       </div>

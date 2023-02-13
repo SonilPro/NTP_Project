@@ -30,7 +30,9 @@ export class PostsService {
   }
 
   public addPost(post: Post) {
-    post.datetime_published = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    let date = new Date();
+    date = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+    post.datetime_published = date.toISOString().slice(0, 19).replace('T', ' ')
     this.apiProvider.addPost(post).subscribe((res: any) => {
       post.id = res.insertId;
       this.posts.push({...post});

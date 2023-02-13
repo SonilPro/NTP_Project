@@ -13,17 +13,19 @@ import {HomepageComponent} from './homepage/homepage.component';
 import {CookieService} from "ngx-cookie-service";
 import {TokenInterceptor} from "./auth/interceptor.service";
 import { UsersComponent } from './users/users.component';
+import {TimeSincePipe} from "./time-since.pipe";
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    PostsComponent,
-    LoginComponent,
-    RegisterComponent,
-    ProfileComponent,
-    HomepageComponent,
-    UsersComponent
-  ],
+    declarations: [
+        AppComponent,
+        PostsComponent,
+        LoginComponent,
+        RegisterComponent,
+        ProfileComponent,
+        HomepageComponent,
+        UsersComponent,
+        TimeSincePipe
+    ],
   imports: [
     BrowserModule,
     HttpClientModule,
